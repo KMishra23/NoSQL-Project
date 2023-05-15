@@ -43,6 +43,11 @@ export default function Navbar() {
               Analyse
              </NavLink>
            </li>
+           <li className="nav-item">
+             <NavLink className="nav-link" to="/create">
+               Create Record
+             </NavLink>
+           </li>
          </ul>
        </div>
      </nav>

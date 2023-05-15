@@ -34,9 +34,9 @@ export default function RecordList() {
       }
   
       const records = await response.json();
+      // console.log(records)
       setRecords(records);
     }
-  
     getRecords();
   
     return;

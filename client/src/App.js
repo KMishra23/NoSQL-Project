@@ -18,7 +18,12 @@ const App = () => {
      <Navbar />
      <Routes>
        {/* <Route exact path="/" element={<RecordList />} /> */}
-       <Route exact path="/" element={<Home/>}/>
+
+       <Route exact path="/" element={<RecordList />} />
+       <Route path="/edit/:id" element={<Edit />} />
+       <Route path="/create" element={<Create />} />
+       
+       {/* <Route exact path="/" element={<Home/>}/> */}
        <Route path="/upload" element={<Upload />} />
        <Route path="/analyse" element={<Analyse />} />
      </Routes>

@@ -7,7 +7,7 @@ const Upload = () => {
 
   const handleUpload = (event) => {
     const file = event.target.files;
-		console.log(event.target.files);
+		// console.log(event.target.files);
     setFiles([...file]);
 		console.log(file);
     // onUpload(file);
@@ -23,9 +23,14 @@ const Upload = () => {
 		console.log(files);
     // onUpload(files);
   };
-	const handleSubmit = (event) => {
+	async function handleSubmit(event) {
 		event.preventDefault();
 		
+		await fetch ("http://localhost:5050/record/", {
+			method: "POST",
+			body: files
+		})
+
 		console.log(event)
 	}
 

@@ -4,8 +4,6 @@ import mongoose from "mongoose";
 
 import "./loadEnvironment.mjs";
 import records from "./routes/record.mjs";
-import router from "./routes/record.mjs";
-
 
 const PORT = process.env.PORT || 5050;
 const app = express();

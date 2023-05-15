@@ -1,8 +1,19 @@
 import express from "express";
 import db from "../db/conn.mjs";
 import { ObjectId } from "mongodb";
+import mongoose, { modelNames } from "mongoose";
 
 const router = express.Router();
+
+
+router.post("/", upload.single('file'), async (req, res) => {
+    const file = req.file
+    res.json({message: 'file here'})
+
+    var tempSchema = mongoose.Schema({}, {strict: false})
+    var thing = mongoose.model('Thing', tempSchema)
+    var t = new thing
+})
 
 // This section will help you get a list of all the records.
 router.get("/", async (req, res) => {
@@ -14,7 +25,7 @@ router.get("/", async (req, res) => {
 // This section will help you get a single record by id
 router.get("/:id", async (req, res) => {
   let collection = await db.collection("records");
-  let query = {_id: new ObjectId(req.params.id)};
+  let query = { _id: new ObjectId(req.params.id) };
   let result = await collection.findOne(query);
 
   if (!result) res.send("Not found").status(404);
@@ -23,6 +34,8 @@ router.get("/:id", async (req, res) => {
 
 // This section will help you create a new record.
 router.post("/", async (req, res) => {
+    console.log("temp")
+
   let newDocument = {
     name: req.body.name,
     position: req.body.position,
@@ -36,12 +49,12 @@ router.post("/", async (req, res) => {
 // This section will help you update a record by id.
 router.patch("/:id", async (req, res) => {
   const query = { _id: new ObjectId(req.params.id) };
-  const updates =  {
+  const updates = {
     $set: {
       name: req.body.name,
       position: req.body.position,
-      level: req.body.level
-    }
+      level: req.body.level,
+    },
   };
 
   let collection = await db.collection("records");
@@ -59,5 +72,8 @@ router.delete("/:id", async (req, res) => {
 
   res.send(result).status(200);
 });
+
+// this section will help create a schema
+// router.get("/");
 
 export default router;
