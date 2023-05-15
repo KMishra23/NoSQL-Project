@@ -3,7 +3,8 @@ import cors from "cors";
 import mongoose from "mongoose";
 
 import "./loadEnvironment.mjs";
-import records from "./routes/record.mjs";
+// import records from "./routes/record.mjs";
+import collectionsRouter from "./routes/collections.mjs";
 
 const PORT = process.env.PORT || 5050;
 const app = express();
@@ -16,7 +17,7 @@ mongoose.connect(uri, {dbName: 'test', useNewUrlParser: true})
 .then(() => console.log("Connection Established"))
 .catch((error) => console.log(error))
 
-app.use("/record", records);
+app.use("/collections", collectionsRouter);
 
 // start the Express server
 app.listen(PORT, () => {

@@ -37,7 +37,7 @@ export default function RecordList() {
       // console.log(records)
       setRecords(records);
     }
-    getRecords();
+    // getRecords();
   
     return;
   }, [records.length]);
