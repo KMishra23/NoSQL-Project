@@ -6,7 +6,7 @@ const Upload = () => {
 
   const handleUpload = (event) => {
     const file = event.target.files;
-		console.log(event.target.files);
+		// console.log(event.target.files);
     setFiles([...files,...file]);
 		console.log(file);
   };
@@ -22,12 +22,20 @@ const Upload = () => {
   };
 	const handleSubmit = async (event) => {
 		event.preventDefault();
-		console.log(files)
+		const formData = new FormData()
+		formData.append('file', files[0])
+		console.log(formData)
+		console.log(files)	
 			await fetch ("http://localhost:5050/collections", {
 			method: "POST",
-			body: files
+			body: formData
 		})
-		console.log(event)
+		.then(response => response.json())
+		.then(data => {
+			console.log(data)
+		})
+		.catch(error => console.error(error))
+		// console.log(event)
 	}
 
   return (

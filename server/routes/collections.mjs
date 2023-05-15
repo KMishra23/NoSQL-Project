@@ -1,15 +1,42 @@
 import express from "express";
 import db from "../db/conn.mjs";
+import multer from "multer";
+import bodyParser from "body-parser";
+import cors from "cors"
+import csv from "csvtojson"
 import { ObjectId } from "mongodb";
 import mongoose, { modelNames } from "mongoose";
 
 const collectionsRouter = express.Router();
+const upload = multer({dest: 'uploads/'})
 
+collectionsRouter.use(cors())
+collectionsRouter.use(bodyParser.urlencoded({extended: false}))
+collectionsRouter.use(bodyParser.json())
 
-collectionsRouter.post("/", async (req, res) => {
+collectionsRouter.post("/", upload.single('file'), async(req, res) => {
+  let collection = await db.collection('new')
+
+  csv()
+  .fromFile(req.file.path)
+  .then(async(jsonObj) => {
+    // console.log(jsonObj)
+    
+    for(var i = 0; i < jsonObj.length; i++) {
+      console.log("added " + i)
+      await collection.insertOne(jsonObj[i])
+    }
+  }).catch((error) => {
+    res.status(500).send({
+      message: "failure",
+      error
+    })
+  })
+
     const file = req.file
-    console.log(req)
-    console.log(req.body)
+    // console.log("help")
+    // console.log(req)
+    console.log(req.file)
     res.json({message: 'file here'})
     // var tempSchema = mongoose.Schema({}, {strict: false})
     // var thing = mongoose.model('Thing', tempSchema)
