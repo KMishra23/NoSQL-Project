@@ -15,57 +15,56 @@ collectionsRouter.use(bodyParser.urlencoded({extended: false}))
 collectionsRouter.use(bodyParser.json())
 
 collectionsRouter.post("/", upload.single('file'), async(req, res) => {
-  // console.log(req.file)
+  let collections = await db.listCollections().toArray()
+  if(collections.indexOf( req.file.originalname.slice(0, req.file.originalname.length-4))!==-1){
 
-  let collection = await db.collection(req.file.originalname.slice(0, req.file.originalname.length-4))
-
-  // console.log(t)
-  
-  var fileExt = req.file.originalname.slice(-3)
-  var theThing;
-  if(fileExt === "tsv") {
-    console.log("reading a tsv")
-    theThing = csv({
-      delimiter: ["\t"]
-    })
-  }
-  else {
-    theThing = csv()
-  }
-
-
-  theThing
-  .fromFile(req.file.path)
-  .then(async(jsonObj) => {
-    // console.log(jsonObj)
-    for(var i = 0; i < jsonObj.length; i++) {
-      // console.log("added " + i)
-      await collection.insertOne(jsonObj[i])
+    let collection = await db.collection(req.file.originalname.slice(0, req.file.originalname.length-4))
+    
+    var fileExt = req.file.originalname.slice(-3)
+    var theThing;
+    if(fileExt === "tsv") {
+      console.log("reading a tsv")
+      theThing = csv({
+        delimiter: ["\t"]
+      })
     }
-  }).catch((error) => {
-    res.status(500).send({
-      message: "failure",
-      error
+    else {
+      theThing = csv()
+    }
+    
+    theThing
+    .fromFile(req.file.path)
+    .then(async(jsonObj) => {
+      // console.log(jsonObj)
+      for(var i = 0; i < jsonObj.length; i++) {
+        // console.log("added " + i)
+        await collection.insertOne(jsonObj[i])
+      }
+    }).catch((error) => {
+      res.status(500).send({
+        message: "failure",
+        error
+      })
     })
-  })
-  // let t = await db.listCollections().toArray()
-
-  res.json({message: 'file here'})  
+    res.json({message: 'collection inserted'})  ;
+  }
+  else{
+    res.json({message: 'collection with same file name exists!'})
+  }
 })
 
-// This section will help you get a list of all the records.
-// collectionsRouter.get("/", async (req, res) => {
-//   let collection = await db.collection("records");
-//   let results = await collection.find({}).toArray();
-//   res.send(results).status(200);
-// });
-
-// returns all collections present in the db
 collectionsRouter.get("/", async(req, res) => {
   let collections = await db.listCollections().toArray()
   res.send(collections).status(200)
 })
 
+collectionsRouter.get("/:id", async (req, res) => {
+  const collection = db.collection(req.params.id);
+  const query = collection.find();
+  query.limit(100);
+  const documents = await query.toArray();
+  res.send(documents).status(200);
+})
 // this section will help create a schema
 // router.get("/");
 

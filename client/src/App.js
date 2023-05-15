@@ -9,6 +9,7 @@ import Home from "./components/home";
 import RecordList from "./components/recordList";
 import Analyse from "./components/analyse";
 import Upload from "./components/upload";
+import ViewCollection from "./components/viewCollection";
 import Edit from "./components/edit";
 import Create from "./components/create";
  
@@ -17,9 +18,8 @@ const App = () => {
    <div className="container">
      <Navbar />
      <Routes>
-       
-       
        <Route exact path="/" element={<Home/>}/>
+       <Route exact path="/:id" element={<ViewCollection/>}/>
        <Route path="/upload" element={<Upload />} />
        <Route path="/analyse" element={<Analyse />} />
      </Routes>

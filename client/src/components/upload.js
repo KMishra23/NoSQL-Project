@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {Badge, Button, List} from "reactstrap";
 
 const Upload = () => {
   const [files, setFiles] = useState([]);
-//   const [filenames, setFilenames] = useState([]);
-
+	const [filesAdded,toggle] = useState(false);
   const handleUpload = (event) => {
     const file = event.target.files;
-		// console.log(event.target.files);
     setFiles([...files,...file]);
-		// console.log(files);
   };
 
   const handleDragOver = (event) => {
@@ -23,8 +21,8 @@ const Upload = () => {
   };
 	const handleSubmit = async (event) => {
 		event.preventDefault();
+		let allfiles=true;
 		for(var i = 0; i < files.length; i++) {
-			// console.log(files[i])
 			const formData = new FormData()
 			formData.append('file', files[i])
 
@@ -34,9 +32,24 @@ const Upload = () => {
 			})
 			.then(response => response.json())
 			.then(data => {
-				console.log(data)
+				if(data.message==="collection inserted"){
+					allfiles&=true;
+				}
+				else if(data.message==="collection with same file name exists!"){
+					setFiles([]);
+					const inpputelement=document.getElementById("file")
+					inpputelement.value="";
+					window.alert(data.message)
+				}
 			})
-			.catch(error => console.error(error))
+			.catch(error => {
+				console.error(error)
+				allfiles&=false;
+			})
+		}
+		if(allfiles===1){
+			setFiles([]);
+			toggle(!filesAdded);
 		}
 	}
 
@@ -59,8 +72,12 @@ const Upload = () => {
 				<input type="file" name="file" id="file" onChange={handleUpload} accept=".csv,.tsv" multiple className="col-3"/>
 			</div>
 				<div className="row mx-auto offset-1">
-			<Button className="col-2" onClick={handleSubmit} style={{margin: "10px"}} >Submit</Button>
+					<Button className="col-2" onClick={handleSubmit} style={{margin: "10px"}} >Submit</Button>
 				</div>
+				{filesAdded?<div className="row mx-auto offset-1">
+					<p>
+						All files inserted! View them <Link to="/">here</Link></p>
+				</div>:""}
 		</div>
   );
 }
