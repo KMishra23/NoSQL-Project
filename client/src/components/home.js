@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import { Badge, Button } from "reactstrap";
 export default function Home() {
 	const [collectionList,setList]=useState([]);
-	const deleteCollection= async(name)=>{
-		await fetch(`http://localhost:5050/collections/${name}`, {
+	const deleteCollection= (name)=>{
+		fetch(`http://localhost:5050/collections/${name}`, {
       method: "DELETE"
     });
   

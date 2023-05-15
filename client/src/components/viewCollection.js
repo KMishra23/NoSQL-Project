@@ -1,4 +1,4 @@
-import React, { useEffect, useState,u } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams,useNavigate } from "react-router-dom";
 import { List, Card, CardBody} from "reactstrap";
 export default function ViewCollection() {
@@ -10,7 +10,7 @@ export default function ViewCollection() {
 			const collectionName=parameters.id.toString();
 			const response=await fetch(`http://localhost:5050/collections/${collectionName}`);
 			if(!response.ok){
-				console.log(response.statusText);
+				// console.log(response.statusText);
 				return;
 			}
 			const documents=await response.json();
