@@ -34,11 +34,11 @@ export default function Home() {
 	}
  return (
    <div>
-     <h3><Badge className="text-dark" color="success" pill>
+     <h2><Badge className="text" color="success" pill>
 			List of uploaded datasets
 			</Badge>
-			</h3>
-			<h5><Badge className="text-dark" color="info" pill>
+			</h2>
+			<h5><Badge className="text-dark m-1" color="info" pill>
 				Click on any collection to view them
 			</Badge></h5>
      <table className="table table-striped" style={{ marginTop: 20, alignItems: "center" }}>

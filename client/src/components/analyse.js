@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Badge, Button, Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from "reactstrap";
+import { Badge, Button, Card,CardBody,CardTitle, CardText } from "reactstrap";
 
 
 const Analyse = () => {
@@ -7,7 +7,7 @@ const Analyse = () => {
   const [collectionSelected, setColSel] = useState("");
   const [columnSel, setColumnSel] = useState("");
   const [columnList, setColumns] = useState([]);
-
+  const [stats,setStats]=useState()
 
   const handleClick= async () =>{
     if(collectionSelected==="" || columnSel===""){
@@ -18,8 +18,7 @@ const Analyse = () => {
       return
     }
     const result = await response.json();
-    console.log(result);
-
+    setStats(result);
   }
   useEffect(() => {
     const getCollections = async () => {
@@ -71,8 +70,22 @@ const Analyse = () => {
         </>
           : ""}
       </div>
-      <div className="row d-flex p-2">
-
+      <div className="row d-flex p-5">
+            {stats!==undefined?<>
+              <Card style={{ width: '20rem'}} >
+            <CardBody>
+              <CardTitle tag="h5">
+                Stats for column {columnSel}
+              </CardTitle>
+              <ul>
+                <li>max: {stats["max"]}</li>
+                <li>min: {stats["min"]}</li>
+                <li>mean: {stats["mean"]}</li>
+                <li>std-dev: {stats["std-dev"]}</li>
+              </ul>
+            </CardBody>
+          </Card>
+            </> :""}
       </div>
     </>
   );
