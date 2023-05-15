@@ -112,7 +112,7 @@ export const age_wise_cancer = [
 ]
 
 export function getStats(collection, columnName) {
-  const column = "$" + columnName
+  let column = "$" + columnName
   const pipeline = [
     {
       "$addFields": {
