@@ -14,6 +14,6 @@ try {
   console.error(e);
 }
 
-let db = conn.db("test");
+let db = conn.db("medical_db");
 
 export default db;

@@ -3,12 +3,13 @@ import {Badge, Button, List} from "reactstrap";
 
 const Upload = () => {
   const [files, setFiles] = useState([]);
+//   const [filenames, setFilenames] = useState([]);
 
   const handleUpload = (event) => {
     const file = event.target.files;
 		// console.log(event.target.files);
     setFiles([...files,...file]);
-		console.log(file);
+		// console.log(files);
   };
 
   const handleDragOver = (event) => {
@@ -22,20 +23,21 @@ const Upload = () => {
   };
 	const handleSubmit = async (event) => {
 		event.preventDefault();
-		const formData = new FormData()
-		formData.append('file', files[0])
-		console.log(formData)
-		console.log(files)	
+		for(var i = 0; i < files.length; i++) {
+			// console.log(files[i])
+			const formData = new FormData()
+			formData.append('file', files[i])
+
 			await fetch ("http://localhost:5050/collections", {
-			method: "POST",
-			body: formData
-		})
-		.then(response => response.json())
-		.then(data => {
-			console.log(data)
-		})
-		.catch(error => console.error(error))
-		// console.log(event)
+				method: "POST",
+				body: formData
+			})
+			.then(response => response.json())
+			.then(data => {
+				console.log(data)
+			})
+			.catch(error => console.error(error))
+		}
 	}
 
   return (

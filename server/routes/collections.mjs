@@ -4,6 +4,7 @@ import multer from "multer";
 import bodyParser from "body-parser";
 import cors from "cors"
 import csv from "csvtojson"
+import tsv2json from "tsv-json"
 import { ObjectId } from "mongodb";
 import mongoose, { modelNames } from "mongoose";
 
@@ -15,13 +16,27 @@ collectionsRouter.use(bodyParser.urlencoded({extended: false}))
 collectionsRouter.use(bodyParser.json())
 
 collectionsRouter.post("/", upload.single('file'), async(req, res) => {
-  let collection = await db.collection('new')
+  console.log(req.file)
 
-  csv()
+  let collection = await db.collection(req.file.originalname.slice(0, req.file.originalname.length-4))
+  
+  var fileExt = req.file.originalname.slice(-3)
+  var theThing;
+  if(fileExt === "tsv") {
+    console.log("reading a tsv")
+    theThing = csv({
+      delimiter: ["\t"]
+    })
+  }
+  else {
+    theThing = csv()
+  }
+
+
+  theThing
   .fromFile(req.file.path)
   .then(async(jsonObj) => {
     // console.log(jsonObj)
-    
     for(var i = 0; i < jsonObj.length; i++) {
       console.log("added " + i)
       await collection.insertOne(jsonObj[i])
@@ -32,14 +47,7 @@ collectionsRouter.post("/", upload.single('file'), async(req, res) => {
       error
     })
   })
-
-    const file = req.file
-    // console.log("help")
-    // console.log(req)
-    console.log(req.file)
     res.json({message: 'file here'})
-    // var tempSchema = mongoose.Schema({}, {strict: false})
-    // var thing = mongoose.model('Thing', tempSchema)
 })
 
 // This section will help you get a list of all the records.
@@ -48,6 +56,8 @@ collectionsRouter.get("/", async (req, res) => {
   let results = await collection.find({}).toArray();
   res.send(results).status(200);
 });
+
+collectionsRouter.get("/all")
 
 // this section will help create a schema
 // router.get("/");
