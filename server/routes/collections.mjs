@@ -15,8 +15,9 @@ collectionsRouter.use(bodyParser.urlencoded({extended: false}))
 collectionsRouter.use(bodyParser.json())
 
 collectionsRouter.post("/", upload.single('file'), async(req, res) => {
-  let collections = await db.listCollections().toArray()
-  if(collections.indexOf( req.file.originalname.slice(0, req.file.originalname.length-4))!==-1){
+  let collections = await db.listCollections().toArray();
+  console.log(collections);
+  if(collections.length===0 || collections.indexOf( req.file.originalname.slice(0, req.file.originalname.length-4))!==-1){
 
     let collection = await db.collection(req.file.originalname.slice(0, req.file.originalname.length-4))
     
@@ -64,6 +65,11 @@ collectionsRouter.get("/:id", async (req, res) => {
   query.limit(100);
   const documents = await query.toArray();
   res.send(documents).status(200);
+})
+collectionsRouter.delete("/:id", async (req, res) => {
+  const collection=db.collection(req.params.id);
+  console.log(collection)
+  collection.drop()
 })
 // this section will help create a schema
 // router.get("/");

@@ -14,7 +14,6 @@ export default function ViewCollection() {
 				return;
 			}
 			const documents=await response.json();
-			console.log(documents)
 			setList(documents);
 		}
 		getDocuments();
