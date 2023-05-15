@@ -50,9 +50,13 @@ collectionsRouter.get("/:id/:col", async (req, res) => {
     res.send(Object.keys(collection)).status(200);
   }
   else{
-    console.log("hojayega")
-    const results=db.collection(req.params.id).aggregate(aggs.getStats(req.params.id,req.params.col));
-    res.send(results.toArray()).status(200);
+    const collection= db.collection(req.params.id);
+    const cursor=collection.aggregate(aggs.getStats(req.params.id,req.params.col));
+    if(cursor.hasNext()){
+      await cursor.next().then((response)=>{
+        res.send(response).status(200)
+      })
+    }
   }
 })
 collectionsRouter.get("/:id", async (req, res) => {

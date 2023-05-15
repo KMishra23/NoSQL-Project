@@ -1,9 +1,7 @@
 import express from "express";
 import cors from "cors";
-import mongoose from "mongoose";
-
+import { MongoClient } from "mongodb";
 import "./loadEnvironment.mjs";
-// import records from "./routes/record.mjs";
 import collectionsRouter from "./routes/collections.mjs";
 
 const PORT = process.env.PORT || 5050;
@@ -13,10 +11,16 @@ app.use(cors());
 app.use(express.json());
 
 const uri = process.env.MONGODB_URI
-mongoose.connect(uri, {dbName: 'test', useNewUrlParser: true})
-.then(() => console.log("Connection Established"))
-.catch((error) => console.log(error))
+const options = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+};
 
+// Connect to the MongoDB server
+MongoClient.connect(uri, options, function(err, client) {
+  if (err) throw err;
+  console.log('Connected to MongoDB server');
+});
 app.use("/collections", collectionsRouter);
 
 // start the Express server
