@@ -14,6 +14,7 @@ const Analyse = () => {
       return
     }
     let res="";
+    let start=performance.now()
     await fetch(`http://localhost:5050/collections/${collectionSelected}/${columnSel}`)
     .then(async (response) => {
       if(response.status===200){
@@ -23,6 +24,7 @@ const Analyse = () => {
         res={"error": "Please Choose Numerical Column"}
       }
     })
+    console.log(performance.now()-start);
     setStats(res);
   }
   useEffect(() => {

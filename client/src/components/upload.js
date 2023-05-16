@@ -25,7 +25,7 @@ const Upload = () => {
 		for(var i = 0; i < files.length; i++) {
 			const formData = new FormData()
 			formData.append('file', files[i])
-			let start=new Date();
+			let start=performance.now();
 			await fetch ("http://localhost:5050/collections", {
 				method: "POST",
 				body: formData
@@ -46,8 +46,7 @@ const Upload = () => {
 				console.error(error)
 				allfiles&=false;
 			})
-			let end=new Date();
-			console.log(end-start);
+			console.log(performance.now()-start);
 		}
 		if(allfiles===1){
 			setFiles([]);
