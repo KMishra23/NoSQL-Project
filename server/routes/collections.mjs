@@ -2,7 +2,8 @@ import express from "express";
 import db from "../db/conn.mjs";
 import multer from "multer";
 import bodyParser from "body-parser";
-import cors from "cors"
+import cors from "cors";
+import csv from "csvtojson"
 import fs from 'fs'
 import * as d3 from "d3";
 import * as aggs from "./aggregates.mjs";
@@ -18,21 +19,45 @@ collectionsRouter.post("/", upload.single('file'), async(req, res) => {
   let collections = await db.listCollections().toArray();
   if(collections.length===0 || collections.indexOf( req.file.originalname.slice(0, req.file.originalname.length-4))===-1){
 
-    const type=req.file.originalname.slice(-3)==="csv"?",":"\t";
+    const fileExt=req.file.originalname.slice(-3)==="csv"?",":"\t";
     let collection = await db.collection(req.file.originalname.slice(0, req.file.originalname.length-4))
     const csvFile = req.file.path;
 
-    fs.readFile(csvFile, "utf8",async (err, data) => {
+    // fs.readFile(csvFile, "utf8",async (err, data) => {
 
-      const parsedData = d3.dsvFormat(type).parse(data,d3.autoType);
-      const docs=Object.keys(parsedData);
-      for(let i=0;i<docs.length -1;i++){
-        await collection.insertOne(parsedData[docs[i]]).catch( (error)=>{
-          res.status(500).send({message: "failure",error})
-        })
+    //   const parsedData = d3.dsvFormat(type).parse(data);
+    //   const docs=Object.keys(parsedData);
+    //   for(let i=0;i<docs.length -1;i++){
+    //     await collection.insertOne(parsedData[docs[i]]).catch( (error)=>{
+    //       res.status(500).send({message: "failure",error})
+    //     })
+    //   }
+    //   res.json({message: 'collection inserted'})  ;
+    // })
+    var theThing;
+    if(fileExt ==="\t") {
+      console.log("reading a tsv")
+      theThing = csv({
+        delimiter: ["\t"]
+      })
+    }
+    else {
+      theThing = csv()
+    }
+    
+    theThing
+    .fromFile(req.file.path)
+    .then(async(jsonObj) => {
+      for(var i = 0; i < jsonObj.length; i++) {
+        await collection.insertOne(jsonObj[i])
       }
-      res.json({message: 'collection inserted'})  ;
+    }).catch((error) => {
+      res.status(500).send({
+        message: "failure",
+        error
+      })
     })
+    res.json({message: 'collection inserted'})  ;
   }
   else{
     res.json({message: 'collection with same file name exists!'})
@@ -54,7 +79,12 @@ collectionsRouter.get("/:id/:col", async (req, res) => {
     const cursor=collection.aggregate(aggs.getStats(req.params.id,req.params.col));
     if(cursor.hasNext()){
       await cursor.next().then((response)=>{
-        res.send(response).status(200)
+        if(response!==null){
+          res.send(response).status(200);
+        }
+        else{
+          res.status(204).send({message: "stringColumn"})
+        }
       })
     }
   }

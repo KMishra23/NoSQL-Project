@@ -8,11 +8,14 @@ export default function ViewCollection() {
 	useEffect(()=>{
 		const getDocuments= async()=>{
 			const collectionName=parameters.id.toString();
+			let start= new Date();
 			const response=await fetch(`http://localhost:5050/collections/${collectionName}`);
 			if(!response.ok){
 				return;
 			}
 			const documents=await response.json();
+			let end=new Date();
+			console.log(end-start);
 			setList(documents);
 		}
 		getDocuments();

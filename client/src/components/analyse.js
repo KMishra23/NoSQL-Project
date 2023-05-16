@@ -13,12 +13,17 @@ const Analyse = () => {
     if(collectionSelected==="" || columnSel===""){
       return
     }
-    const response=await fetch(`http://localhost:5050/collections/${collectionSelected}/${columnSel}`)
-    if(!response.ok){
-      return
-    }
-    const result = await response.json();
-    setStats(result);
+    let res="";
+    await fetch(`http://localhost:5050/collections/${collectionSelected}/${columnSel}`)
+    .then(async (response) => {
+      if(response.status===200){
+        res=await response.json();
+      }
+      else if(response.status===204){
+        res={"error": "Please Choose Numerical Column"}
+      }
+    })
+    setStats(res);
   }
   useEffect(() => {
     const getCollections = async () => {
@@ -78,10 +83,9 @@ const Analyse = () => {
                 Stats for column {columnSel}
               </CardTitle>
               <ul>
-                <li>max: {stats["max"]}</li>
-                <li>min: {stats["min"]}</li>
-                <li>mean: {stats["mean"]}</li>
-                <li>std-dev: {stats["std-dev"]}</li>
+               {Object.keys(stats).map((keey) => {
+                return <li key={keey}> {keey}: {stats[keey]}</li>
+               })}
               </ul>
             </CardBody>
           </Card>

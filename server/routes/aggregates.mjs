@@ -110,39 +110,49 @@ export const age_wise_cancer = [
       }
     }
 ]
-
 export function getStats(collection, columnName) {
-  let column = "$" + columnName
+  const column = "$" + columnName
+  const columnCon = column + "Conv"
   const pipeline = [
     {
       "$addFields": {
-        "type": { "$type": column }
+        "ifNumbers": { "$regexMatch": {
+          "input": column, "regex": /^[0-9]+$/
+        } }
       }
     },
     {
       "$match": {
-      "type": 'int'
+      "ifNumbers": true
       }
     },
     {
       "$project": {
-        "type": 0,
+        "ifNumbers": 0,
+      }
+    },
+    {
+      "$addFields": {
+        columnCon: { $convert :{
+          "input": column,
+          "to": "double",
+        }}
       }
     },
     {
       "$group": {
         "_id": null,
         "max": {
-          "$max": column
+          "$max": "$columnCon"
         },
         "min": {
-          "$min": column
+          "$min": "$columnCon"
         },
         "mean": {
-          "$avg": column
+          "$avg": "$columnCon"
         },
         "std-dev": {
-          "$stdDevSamp": column
+          "$stdDevSamp": "$columnCon"
         }
       }
     },
